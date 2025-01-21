@@ -4,6 +4,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import re
+from streamlit_circular_progress import CircularProgress
 
 # Load the model
 @st.cache_resource
@@ -122,6 +123,54 @@ def main():
             st.write(f"#### Plagiarism Score: {results['plagiarism_score']:.2f}")
         except Exception as e:
             st.error(f"An error occurred while processing the file: {e}")
+  # Assuming this library is being used
 
+# Function to update progress values dynamically
+def update_progress(score_key):
+    if score_key in st.session_state:
+        circular_progress_objects[score_key].update_value(progress=st.session_state[score_key])
+
+# Layout and Title
+st.title("Score Dashboard with Circular Progress Indicators")
+
+# Initialize progress data
+scores = {
+    "Score 1": (results['similarity'])*100,
+    "Score 2": (results['innovation_score'])*100,
+    "Score 3": (results['novelty_score'])*100,
+    "Score 4": (results['plagiarism_score'])*100,
+}
+
+# Dictionary to store CircularProgress objects
+circular_progress_objects = {}
+
+# Create a 2x2 grid to display circular progress indicators
+columns = st.columns(2)
+
+for i, (label, value) in enumerate(scores.items()):
+    with columns[i % 2]:  # Alternate between the two columns
+        # Create CircularProgress for each score with medium size
+        circular_progress = CircularProgress(
+            value=value,  # Initial value
+            label=label,  # Label for the score
+            size="Medium",  # Medium size for the circular progress
+            key=f"circular_progress_{label}",  # Unique key
+        )
+        circular_progress.st_circular_progress()  # Render the component
+        
+        # Store the object for dynamic updates
+        circular_progress_objects[label] = circular_progress
+
+        # Slider for controlling the progress dynamically
+        st.slider(
+            f"Set {label}", 
+            min_value=0, 
+            max_value=100, 
+            value=value, 
+            step=1, 
+            key=label, 
+            on_change=update_progress, 
+            args=(label,),  # Pass the score label as an argument
+        )
 if __name__ == "__main__":
     main()
