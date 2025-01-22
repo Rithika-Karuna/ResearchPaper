@@ -11,22 +11,79 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="html2.css">
+    <style>
+        .modal-content {
+            border: 2px solid #28a745;
+            border-radius: 10px;
+        }
+        .form-group label {
+            color: #333; /* Professional dark gray color */
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border: 1px solid #28a745;
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        /* Centering the submit button in the form */
+        .feedback-form button {
+            display: block;
+            margin: 20px auto; /* Center button horizontally */
+        }
+    </style>
     <script>
         function showFeedbackPopup() {
             document.getElementById('feedback-modal').style.display = 'block';
         }
-    
 
         function hideFeedbackPopup() {
             document.getElementById('feedback-modal').style.display = 'none';
-            alert('Message sent!');
+        }
+
+        function validateFeedbackForm(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const rating = document.getElementById('rating').value;
+            const feedback = document.getElementById('feedback').value.trim();
+
+            if (!name) {
+                alert('Please enter your name.');
+                return;
+            }
+
+            if (!email) {
+                alert('Please enter your email.');
+                return;
+            }
+
+            if (!rating) {
+                alert('Please select a rating.');
+                return;
+            }
+
+            if (!feedback) {
+                alert('Please provide your feedback.');
+                return;
+            }
+
+            // Redirect to the thank-you page
+            window.location.href = 'html3.html';
         }
     </script>
 </head>
 <body>
 
 <!-- Navigation Bar with Bootstrap Hamburger Menu -->
- <!-- Navigation Bar with Bootstrap Hamburger Menu -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Conference Paper Checker</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +94,7 @@
             <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
             <li class="nav-item"><a class="nav-link" href="#steps">Steps</a></li>
             <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
-            <li class="nav-item"><a class="nav-link" href="#faq">FAQs</a></li>
+            <li class="nav-item"><a class="nav-link" href="skeleten.html">Guide</a></li>
             <li class="nav-item" id="feedback-link"><a class="nav-link" href="#feedback" onclick="showFeedbackPopup()">Feedback</a></li>
             <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
         </ul>
@@ -71,34 +128,39 @@
         </div>
         
         <!-- Trigger Modal Button -->
-        <a href="https://researchpaper-5zuv9vkb7yq6zq4efsrsyu.streamlit.app/" class="btn btn-primary">
-            <i class="fas fa-upload"></i> Check Paper
+        <a href="https://ai-research-paper-checker-wbedfehdharuhaupd2x6ub.streamlit.app/" class="btn btn-primary">
+            <i class="fas fa-upload"></i>Check Paper
         </a>
     </div>
 </div>
 
-<!-- Modal for Steps -->
-<div class="modal fade" id="stepsModal" tabindex="-1" role="dialog" aria-labelledby="stepsModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="stepsModalLabel">Research Paper Analyzer Steps</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Follow these steps to analyze your research paper effectively.</p>
-                <ol>
-                    <li>Upload your research paper.</li>
-                    <li>Review the results of plagiarism and formatting checks.</li>
-                    <li>Make necessary corrections based on feedback.</li>
-                </ol>
-                <button class="button btn btn-success">Analyze Paper</button>
-            </div>
+
+
+<section id="testimonials" style="background-color: #f9f9f9; padding: 40px 20px;">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #333; font-size: 28px; font-weight: bold;">What Our Users Say</h2>
+        <p style="color: #666; font-size: 16px;">Discover how our tool has helped others prepare their research papers</p>
+    </div>
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+        <!-- Testimonial 1 -->
+        <div style="background: white; border: 1px solid #ddd; border-radius: 8px; max-width: 300px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <p style="color: #333; font-size: 16px; font-style: italic;">"This tool made preparing my conference paper so much easier. It saved me a ton of time!"</p>
+            <p style="color: #666; font-size: 14px; text-align: right; margin-top: 10px;">- Jane Doe</p>
+        </div>
+        <!-- Testimonial 2 -->
+        <div style="background: white; border: 1px solid #ddd; border-radius: 8px; max-width: 300px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <p style="color: #333; font-size: 16px; font-style: italic;">"Accurate and easy to use! I highly recommend this for anyone submitting to conferences."</p>
+            <p style="color: #666; font-size: 14px; text-align: right; margin-top: 10px;">- John Smith</p>
+        </div>
+        <!-- Testimonial 3 -->
+        <div style="background: white; border: 1px solid #ddd; border-radius: 8px; max-width: 300px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <p style="color: #333; font-size: 16px; font-style: italic;">"The plagiarism detection feature helped me avoid mistakes and meet submission standards."</p>
+            <p style="color: #666; font-size: 14px; text-align: right; margin-top: 10px;">- Sarah Lee</p>
         </div>
     </div>
-</div>
+</section>
+
+
 
 <!-- Footer -->
 <footer>
@@ -122,7 +184,7 @@
         <span class="close-button" onclick="hideFeedbackPopup()">&times;</span>
         <h2>We Value Your Feedback</h2>
         <p>Help us improve by sharing your thoughts.</p>
-        <form action="#" method="post" class="feedback-form">
+        <form action="#" method="post" class="feedback-form" onsubmit="validateFeedbackForm(event)">
             <div class="form-group">
                 <label for="name">Your Name:</label>
                 <input type="text" id="name" name="name" placeholder="Enter your name" required>
@@ -146,10 +208,11 @@
                 <label for="feedback">Your Feedback:</label>
                 <textarea id="feedback" name="feedback" rows="4" placeholder="Write your feedback here..." required></textarea>
             </div>
-            <button type="submit" class="submit-button">Submit Feedback</button>
+            <button type="submit" class="btn btn-primary">Submit Feedback</button>
         </form>
     </div>
 </div>
+
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
