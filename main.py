@@ -2,7 +2,6 @@ import streamlit as st
 import nltk
 from sentence_transformers import SentenceTransformer, util
 import pdfplumber
-#from rake_nltk import Rake
 
 nltk.download('stopwords')
 nltk.download('punkt')
