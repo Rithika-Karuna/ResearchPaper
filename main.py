@@ -1,10 +1,6 @@
 import streamlit as st
-import nltk
 from sentence_transformers import SentenceTransformer, util
 import pdfplumber
-
-nltk.download('stopwords')
-nltk.download('punkt')
 
 # Load Sentence-BERT model
 sbert_model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -21,44 +17,14 @@ def extract_text_from_pdf(pdf_path):
         st.error(f"Error reading {pdf_path}: {e}")
         return ""
 
-# Enhanced title extraction
+# Extract title from the first page
 def extract_title_from_pdf(pdf_path):
     try:
         with pdfplumber.open(pdf_path) as pdf:
             first_page = pdf.pages[0]
-            words = first_page.extract_words()
-
-            if not words:
-                return "Unable to extract title: No text found."
-
-            if 'font_size' in words[0]:
-                font_sizes = [float(word.get('font_size', 0)) for word in words]
-                max_font_size = max(font_sizes)
-
-                large_font_words = [
-                    word for word in words if word.get('font_size', 0) == max_font_size
-                ]
-
-                title_lines = {}
-                for word in large_font_words:
-                    y_coord = round(word['top'], 1)
-                    if y_coord not in title_lines:
-                        title_lines[y_coord] = []
-                    title_lines[y_coord].append(word['text'])
-
-                sorted_lines = sorted(title_lines.items())
-                title = " ".join([" ".join(line[1]) for line in sorted_lines])
-            else:
-                lines = first_page.extract_text().split("\n")
-                title = lines[0] + " " + lines[1] if len(lines) > 1 else lines[0]
-
-            stop_keywords = ['abstract', 'keywords', 'introduction']
-            for keyword in stop_keywords:
-                if keyword in title.lower():
-                    title = title.lower().split(keyword)[0].strip()
-
-            return title if title else "Title could not be identified."
-
+            lines = first_page.extract_text().split("\n")
+            title = lines[0] + " " + lines[1] if len(lines) > 1 else lines[0]
+            return title.strip() if title else "Title could not be identified."
     except Exception as e:
         st.error(f"Error reading PDF title: {e}")
         return "Error occurred during title extraction."
@@ -69,15 +35,12 @@ def extract_conclusion(text):
     if conclusion_start == -1:
         return None
     conclusion_text = text[conclusion_start:]
-
     headings = ['introduction', 'methods', 'references', 'abstract']
     end_index = len(conclusion_text)
-
     for heading in headings:
         heading_start = conclusion_text.lower().find(heading)
         if heading_start != -1:
             end_index = min(end_index, heading_start)
-
     return conclusion_text[:end_index].strip()
 
 # Validate word count for a specific section
@@ -105,49 +68,22 @@ def predict_paper_acceptance(new_paper_text, title):
     conclusion_valid, conclusion_count, conclusion_feedback = validate_section_word_count(conclusion_text, 300)
     feedback.append(conclusion_feedback)
 
-    plagiarism_score = compute_similarity_score(new_paper_text)
-    similarity_score = compute_similarity_score(new_paper_text)
+    # Calculate similarity score once
+    score = compute_similarity_score(new_paper_text)
+    plagiarism_score = score
+    similarity_score = score
     innovation_score = 1 - plagiarism_score
     novelty_score = 0.5 + similarity_score / 2
 
     if not conclusion_valid:
         feedback.append("Paper Rejected due to missing or invalid conclusion.")
-
-        if plagiarism_score > 0.6:
-            feedback.append(f"High plagiarism score ({plagiarism_score:.2f}). Consider rephrasing and adding unique content.")
-        else:
-            feedback.append("Plagiarism score is acceptable.")
-
-        if novelty_score < 0.6:
-            feedback.append(f"Low novelty score ({novelty_score:.2f}). Enhance originality or innovative aspects of the paper.")
-        else:
-            feedback.append("Novelty score is good.")
-
-        if innovation_score < 0.5:
-            feedback.append(f"Low innovation score ({innovation_score:.2f}). Emphasize unique ideas and contributions.")
-        else:
-            feedback.append("Innovation score indicates a good level of originality.")
-
-        feedback.append("Ensure proper citation and a clear structure for better understanding.")
+        feedback.append(f"High plagiarism score ({plagiarism_score:.2f}). Consider rephrasing and adding unique content.")
+        feedback.append(f"Low novelty score ({novelty_score:.2f}). Enhance originality.")
+        feedback.append(f"Low innovation score ({innovation_score:.2f}). Emphasize unique ideas.")
+        feedback.append("Ensure proper citation and a clear structure.")
         return "Paper Rejected", feedback, plagiarism_score, similarity_score, innovation_score, novelty_score, conclusion_count
 
-    if plagiarism_score > 0.6:
-        feedback.append(f"High plagiarism score ({plagiarism_score:.2f}). Consider rephrasing and adding unique content.")
-    else:
-        feedback.append("Plagiarism score is acceptable.")
-
-    if novelty_score < 0.6:
-        feedback.append(f"Low novelty score ({novelty_score:.2f}). Enhance originality or innovative aspects of the paper.")
-    else:
-        feedback.append("Novelty score is good.")
-
-    if innovation_score < 0.5:
-        feedback.append(f"Low innovation score ({innovation_score:.2f}). Emphasize unique ideas and contributions.")
-    else:
-        feedback.append("Innovation score indicates a good level of originality.")
-
-    feedback.append("Ensure proper citation and a clear structure for better understanding.")
-
+    feedback.append("Paper Accepted")
     return "Paper Accepted", feedback, plagiarism_score, similarity_score, innovation_score, novelty_score, conclusion_count
 
 # Streamlit app
