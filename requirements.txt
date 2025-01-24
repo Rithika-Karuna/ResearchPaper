@@ -1,4 +1,5 @@
-streamlit==1.21.0
-sentence-transformers==2.2.2
-pdfplumber==0.8.0
-torch==2.0.1
+streamlit==1.21.0  # Streamlit supports Python 3.11
+sentence-transformers==2.2.2  # Compatible with Python 3.11
+pdfplumber==0.8.0  # Compatible with Python 3.11
+torch==2.2.2  # torch 2.0.1 is not available for Python 3.11, so using the latest available compatible version (2.2.2)
+
