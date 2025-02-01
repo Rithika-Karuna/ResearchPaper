@@ -60,13 +60,6 @@ def compute_similarity_score(text):
     similarity = util.pytorch_cos_sim(embedding1, embedding2)
     return float(similarity)
 
-# Function to determine color based on score
-def get_score_color(score, high_good=True):
-    if high_good:
-        return "🟢" if score > 0.7 else "🟡" if score > 0.4 else "🔴"
-    else:
-        return "🔴" if score > 0.7 else "🟡" if score > 0.4 else "🟢"
-
 # Predict paper acceptance dynamically with feedback
 def predict_paper_acceptance(new_paper_text, title):
     feedback = [f"Topic of the research paper: {title}"]
@@ -81,7 +74,6 @@ def predict_paper_acceptance(new_paper_text, title):
     similarity_score = score
     innovation_score = 1 - plagiarism_score
     novelty_score = 0.5 + similarity_score / 2
-
 
     if not conclusion_valid:
         feedback.append("Paper Rejected due to missing or invalid conclusion.")
@@ -112,19 +104,15 @@ if uploaded_file is not None:
 
         st.subheader("Result")
         st.write(result)
-    
+ 
         st.subheader("Feedback")
         for comment in feedback:
             st.write(f"- {comment}")
 
-        st.subheader("Scores Visualization")
-        st.write(f"{get_score_color(plagiarism, high_good=False)} Plagiarism Score: {plagiarism:.2f}")
-        st.progress(plagiarism)
-        st.write(f"{get_score_color(similarity, high_good=False)} Similarity Score: {similarity:.2f}")
-        st.progress(similarity)
-        st.write(f"{get_score_color(innovation, high_good=True)} Innovation Score: {innovation:.2f}")
-        st.progress(innovation)
-        st.write(f"{get_score_color(novelty, high_good=True)} Novelty Score: {novelty:.2f}")
-        st.progress(novelty)
+        st.subheader("Scores")
+        st.write(f"Plagiarism Score: {plagiarism:.2f}")
+        st.write(f"Similarity Score: {similarity:.2f}")
+        st.write(f"Innovation Score: {innovation:.2f}")
+        st.write(f"Novelty Score: {novelty:.2f}")
     else:
-        st.error("Could not extract text from the uploaded PDF.")
+        st.error("Could not extract text from the uploaded PDF.") 
